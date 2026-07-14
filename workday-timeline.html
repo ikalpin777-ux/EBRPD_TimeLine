@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Workday @ EBRPD — Implementation Timeline</title>
+<style>
+  :root{
+    --ebrpd-green: #2e5f1e;
+    --ebrpd-green-light: #4a7d34;
+    --track-gray: #d7dbd3;
+    --text-dark: #26301f;
+    --text-mid: #5b6255;
+    --bg: #ffffff;
+    --amber: #b8790a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Segoe UI", "Segoe UI Web", Arial, sans-serif;
+    background:var(--bg);
+  }
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:28px 32px 32px;
+  }
+  .eyebrow{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--ebrpd-green);
+    margin:0 0 4px;
+  }
+  h2.title{
+    font-size:22px;
+    font-weight:700;
+    color:var(--text-dark);
+    margin:0 0 22px;
+  }
+  .timeline{
+    position:relative;
+    padding-top:6px;
+  }
+  .track{
+    position:relative;
+    height:6px;
+    border-radius:3px;
+    background:var(--track-gray);
+    margin:0 4px;
+  }
+  .track-fill{
+    position:absolute;
+    top:0; left:0; height:6px;
+    border-radius:3px;
+    background:linear-gradient(90deg, var(--ebrpd-green) 0%, var(--ebrpd-green-light) 100%);
+    width:66%; /* through end of Architect & Configure */
+  }
+  .stops{
+    display:flex;
+    justify-content:space-between;
+    margin-top:-3px;
+    position:relative;
+  }
+  .stop{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    padding:0 6px;
+    position:relative;
+  }
+  .dot-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:12px;
+    width:100%;
+    position:relative;
+  }
+  .dot{
+    width:16px;height:16px;
+    border-radius:50%;
+    background:var(--bg);
+    border:3px solid var(--track-gray);
+    z-index:2;
+  }
+  .stop.complete .dot{
+    background:var(--ebrpd-green);
+    border-color:var(--ebrpd-green);
+  }
+  .stop.active .dot{
+    background:#fff;
+    border-color:var(--amber);
+    box-shadow:0 0 0 4px rgba(184,121,10,0.15);
+  }
+  .stop.active .dot::after{
+    content:"";
+    position:absolute;
+    width:16px;height:16px;
+    border-radius:50%;
+    border:2px solid var(--amber);
+    animation:pulse 2s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{transform:scale(1); opacity:0.7;}
+    100%{transform:scale(2.1); opacity:0;}
+  }
+  .check{
+    position:relative;
+    z-index:3;
+    color:#fff;
+    font-size:10px;
+    font-weight:900;
+    margin-left:-16px;
+    width:16px;
+    text-align:center;
+    pointer-events:none;
+  }
+  .label{
+    margin-top:12px;
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--text-dark);
+    line-height:1.3;
+  }
+  .stop.active .label{ color:var(--amber); }
+  .stop.upcoming .label{ color:var(--text-mid); font-weight:600; }
+  .status{
+    margin-top:3px;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.3px;
+    text-transform:uppercase;
+  }
+  .stop.complete .status{ color:var(--ebrpd-green); }
+  .stop.active .status{ color:var(--amber); }
+  .stop.upcoming .status{ color:var(--text-mid); }
+  .dates{
+    margin-top:2px;
+    font-size:12px;
+    color:var(--text-mid);
+  }
+  .footer-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:26px;
+    padding-top:16px;
+    border-top:1px solid #e7e5e2;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .footer-note{
+    font-size:12.5px;
+    color:var(--text-mid);
+  }
+  .footer-note b{ color:var(--text-dark); }
+  .golive-badge{
+    background:var(--ebrpd-green);
+    color:#fff;
+    border-radius:6px;
+    padding:10px 16px;
+    text-align:center;
+    min-width:150px;
+  }
+  .golive-badge .gl-label{
+    font-size:9.5px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    opacity:0.85;
+    margin-bottom:2px;
+  }
+  .golive-badge .gl-date{
+    font-size:17px;
+    font-weight:800;
+    line-height:1.1;
+  }
+  .golive-badge .gl-sub{
+    font-size:10.5px;
+    opacity:0.85;
+    margin-top:2px;
+  }
+  @media (max-width:700px){
+    .stops{flex-wrap:wrap;}
+    .stop{flex:0 0 33.33%; margin-bottom:18px;}
+    .track{display:none;}
+    .footer-row{flex-direction:column; align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">East Bay Regional Park District</p>
+  <h2 class="title">Implementation Timeline — Where We Are</h2>
+
+  <div class="timeline">
+    <div class="track"><div class="track-fill"></div></div>
+    <div class="stops">
+
+      <div class="stop complete">
+        <div class="dot-row"><div class="dot"></div><div class="check">✓</div></div>
+        <div class="label">Readiness</div>
+        <div class="status">Complete</div>
+        <div class="dates">Feb 2026</div>
+      </div>
+
+      <div class="stop complete">
+        <div class="dot-row"><div class="dot"></div><div class="check">✓</div></div>
+        <div class="label">Plan</div>
+        <div class="status">Complete</div>
+        <div class="dates">Apr 2026</div>
+      </div>
+
+      <div class="stop active">
+        <div class="dot-row"><div class="dot"></div></div>
+        <div class="label">Architect &amp; Configure</div>
+        <div class="status">In Progress</div>
+        <div class="dates">Wraps Aug 1</div>
+      </div>
+
+      <div class="stop upcoming">
+        <div class="dot-row"><div class="dot"></div></div>
+        <div class="label">E2E Test</div>
+        <div class="status">Upcoming</div>
+        <div class="dates">Aug – Mid Nov</div>
+      </div>
+
+      <div class="stop upcoming">
+        <div class="dot-row"><div class="dot"></div></div>
+        <div class="label">Deploy</div>
+        <div class="status">Upcoming</div>
+        <div class="dates">Nov – Dec 21</div>
+      </div>
+
+      <div class="stop upcoming">
+        <div class="dot-row"><div class="dot"></div></div>
+        <div class="label">Go-Live</div>
+        <div class="status">Target</div>
+        <div class="dates">Dec 21, 2026</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-row">
+    <div class="footer-note">
+      Currently wrapping the <b>Architect &amp; Configure</b> phase, on track to move into <b>End-to-End Testing</b> in August.
+    </div>
+    <div class="golive-badge">
+      <div class="gl-label">Target Go-Live</div>
+      <div class="gl-date">Dec 21, 2026</div>
+      <div class="gl-sub">Full Suite Launch</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
